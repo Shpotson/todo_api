@@ -9,7 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from common.error import ValidationErrorResponse, NotFoundErrorResponse
 from domain.tasks import TaskType, Task
 from infrastructure.repositories.tasks.task_repository import TasksRepository, CommonRepositoryAnswers
-from src.common.error import OptimisticConcurrencyErrorResponse
+from common.error import OptimisticConcurrencyErrorResponse
 
 app = FastAPI()
 
@@ -81,7 +81,18 @@ def get_task_by_id(id:str):
 
     return JSONResponse(content=json_data, status_code = 200)
 
-@app.patch('/task')
+@app.delete('/task/{pk}')
+def delete_task_by_id(id:str):
+    task = tasks_repository.get_by_id(id)
+    if task is None:
+        error_message = "Task with id '" + id + "' not found."
+        return NotFoundErrorResponse(error_message)
+
+    tasks_repository.delete(id)
+
+    return PlainTextResponse(content="Deleted task with id '" + id + "'", status_code = 200)
+
+@app.put('/task')
 def update_task(id:str, type:str, name:str, description:str, to_date: datetime, from_date: datetime | None):
     
     if not hasattr(TaskType, type):

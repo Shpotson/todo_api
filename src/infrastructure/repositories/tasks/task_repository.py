@@ -33,6 +33,14 @@ class TasksRepository:
             "CREATE TABLE tasks(id UNIQUE, type, name, created_at, updated_at, description, to_date, from_date);"
         )
 
+    def delete(self, id):
+        con = sqlite3.connect(self.db_root)
+        cur = con.cursor()
+
+        get_result = cur.execute("DELETE FROM tasks WHERE id = ?", (id,))
+
+        con.commit()
+
     def get_by_type(self, task_type):
         tasks_to_return = []
 
