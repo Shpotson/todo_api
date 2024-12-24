@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  todo-service:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: todo-service
+    ports:
+      - "5481:80"
